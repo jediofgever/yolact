@@ -158,3 +158,5 @@ vid/
 vidres/
 
 _.py
+data/motor_data/*
+.png

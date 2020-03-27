@@ -172,6 +172,21 @@ pascal_sbd_dataset = dataset_base.copy({
     'class_names': PASCAL_CLASSES,
 })
 
+MOTOR_CLASSES = ("motor","nonmotor")
+MOTOR_LABEL_MAP = { 0:  1,  1:  2}
+
+motor_dataset = dataset_base.copy({
+    'name': 'Motor Part Dataset',
+
+    'train_images': './data/motor_data',
+    'valid_images': './data/motor_data',
+    
+    'train_info': './data/motor_data/via_export_coco.json',
+    'valid_info': './data/motor_data/via_export_coco.json',
+
+    'label_map' : MOTOR_LABEL_MAP,
+    'class_names': ('motor', 'nonmotor')
+})
 
 
 
@@ -657,8 +672,8 @@ yolact_base_config = coco_base_config.copy({
     'name': 'yolact_base',
 
     # Dataset stuff
-    'dataset': coco2017_dataset,
-    'num_classes': len(coco2017_dataset.class_names) + 1,
+    'dataset': motor_dataset,
+    'num_classes': len(motor_dataset.class_names) + 1,
 
     # Image Size
     'max_size': 550,
@@ -667,6 +682,7 @@ yolact_base_config = coco_base_config.copy({
     'lr_steps': (280000, 600000, 700000, 750000),
     'max_iter': 800000,
     
+    # Backbone Settings
     # Backbone Settings
     'backbone': resnet101_backbone.copy({
         'selected_layers': list(range(1, 4)),
@@ -772,6 +788,17 @@ yolact_resnet50_pascal_config = yolact_resnet50_config.copy({
 yolact_plus_base_config = yolact_base_config.copy({
     'name': 'yolact_plus_base',
 
+    # Dataset stuff
+    'dataset': motor_dataset,
+    'num_classes': len(motor_dataset.class_names) + 1,
+
+    # Image Size
+    'max_size': 550,
+    
+    # Training params
+    'lr_steps': (280000, 600000, 700000, 750000),
+    'max_iter': 800000,
+
     'backbone': resnet101_dcn_inter3_backbone.copy({
         'selected_layers': list(range(1, 4)),
         
@@ -781,6 +808,7 @@ yolact_plus_base_config = yolact_base_config.copy({
         'preapply_sqrt': False,
         'use_square_anchors': False,
     }),
+
 
     'use_maskiou': True,
     'maskiou_net': [(8, 3, {'stride': 2}), (16, 3, {'stride': 2}), (32, 3, {'stride': 2}), (64, 3, {'stride': 2}), (128, 3, {'stride': 2})],
@@ -807,7 +835,7 @@ yolact_plus_resnet50_config = yolact_plus_base_config.copy({
 
 
 # Default config
-cfg = yolact_base_config.copy()
+cfg = yolact_plus_base_config.copy()
 
 def set_cfg(config_name:str):
     """ Sets the active config. Works even if cfg is already imported! """
